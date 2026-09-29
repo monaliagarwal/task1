@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Feed — PulseFeed Platform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Banner -->
+    <div class="hero-section text-center p-5 mb-4 rounded-4 shadow-sm bg-gradient-primary text-white">
+        <h1 class="display-5 fw-bold mb-2">PulseFeed Knowledge Cloud</h1>
+        <p class="lead mb-0 text-white-50">Enterprise intelligence, technical digests, and engineering deep-dives.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Feed Column -->
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                <h4 class="fw-bold mb-0">
+                    {% if current_tag %}
+                        <span class="badge bg-primary me-2">#{{ current_tag }}</span> Tagged Stories
+                    {% elif search_query %}
+                        Results for "<span class="text-primary">{{ search_query }}</span>"
+                    {% else %}
+                        Global Articles Feed
+                    {% endif %}
+                </h4>
+                {% if current_tag or search_query %}
+                    <a href="{% url 'feed' %}" class="btn btn-sm btn-outline-secondary">Clear Filter</a>
+                {% endif %}
+            </div>
+
+            {% if not articles %}
+                <div class="card p-5 text-center text-muted border-dashed">
+                    <i class="bi bi-inbox fs-1 mb-2"></i>
+                    <p class="mb-0">No articles available yet. Be the first to publish a story!</p>
+                </div>
+            {% endif %}
+
+            {% for article in articles %}
+                <div class="card mb-3 article-card shadow-sm border-0 rounded-3" data-article-id="{{ article.id }}">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="avatar-sm bg-secondary text-white rounded-circle text-center">{{ article.author.username|slice:":1"|upper }}</span>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold text-dark">{{ article.author.username }}</h6>
+                                    <small class="text-muted">{{ article.created_at|date:"M d, Y" }}</small>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary favorite-btn d-flex align-items-center gap-1 rounded-pill px-3" data-id="{{ article.id }}">
+                                <i class="bi bi-heart"></i>
+                                <span class="fav-count">{{ article.favorites.count }}</span>
+                            </button>
+                        </div>
+                        <h4 class="card-title fw-bold mt-2">
+                            <a href="{% url 'article_detail' slug=article.slug %}" class="text-decoration-none text-dark hover-primary">
+                                {{ article.title }}
+                            </a>
+                        </h4>
+                        <p class="card-text text-secondary mb-3">{{ article.description|default:article.body|truncatechars:180 }}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'article_detail' slug=article.slug %}" class="text-primary text-decoration-none fw-semibold read-more-link">
+                                Read more <i class="bi bi-arrow-right"></i>
+                            </a>
+                            <div class="tags-container">
+                                {% for tag in article.tags.all %}
+                                    <a href="{% url 'feed' %}?tag={{ tag.slug }}" class="badge bg-light text-secondary border text-decoration-none me-1">#{{ tag.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Sidebar Column -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-3 mb-4 popular-tags-card">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-tags me-2 text-primary"></i>Trending Topics</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for tag in popular_tags %}
+                            <a href="{% url 'feed' %}?tag={{ tag.slug }}" class="badge bg-white border text-dark p-2 text-decoration-none hover-shadow">
+                                #{{ tag.name }}
+                            </a>
+                        {% empty %}
+                            <p class="text-muted small mb-0">No tags available.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-3 bg-light p-3">
+                <div class="card-body">
+                    <h6 class="fw-bold"><i class="bi bi-shield-check me-2 text-success"></i>System QA Notice</h6>
+                    <p class="small text-muted mb-0">
+                        This instance runs the PulseFeed AI-assisted MVP candidate build. For bugs, IDOR vulnerabilities, or rendering exploits, document findings in the QA report.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

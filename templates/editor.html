@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_edit %}Edit Story{% else %}Create New Story{% endif %} — PulseFeed{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    <h2 class="fw-bold mb-4">
+                        {% if is_edit %}
+                            <i class="bi bi-pencil-square me-2 text-primary"></i>Edit Story
+                        {% else %}
+                            <i class="bi bi-feather me-2 text-primary"></i>Write a Story
+                        {% endif %}
+                    </h2>
+
+                    {% if error %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+
+                    <form method="POST" id="story-form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="form-label fw-semibold">Story Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-lg" id="title" name="title" value="{{ title|default:'' }}" placeholder="What's this story about?" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label fw-semibold">Summary / Subtitle</label>
+                            <input type="text" class="form-control" id="description" name="description" value="{{ description|default:'' }}" placeholder="A short 1-2 sentence teaser">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="body" class="form-label fw-semibold">Story Content (HTML / Markdown) <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="body" name="body" rows="8" placeholder="Share your insights, code, or perspectives..." required>{{ body|default:'' }}</textarea>
+                            <div class="form-text text-muted">Supports formatting tags. Caution: Raw markup is passed directly.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="tags" class="form-label fw-semibold">Topics / Tags (comma separated)</label>
+                            <!-- BUG-03 FLAW: In edit mode, tags value is not populated by the vibe-coded controller! -->
+                            <input type="text" class="form-control" id="tags" name="tags" value="{{ tags|default:'' }}" placeholder="e.g. ai, python, architecture">
+                            <div class="form-text text-muted">Separate multiple tags with commas.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                            <a href="{% url 'feed' %}" class="btn btn-outline-secondary">Cancel</a>
+                            <!-- BUG-06: Button lacks click throttling or disabled state -->
+                            <button type="submit" id="submit-story-btn" class="btn btn-primary px-4 fw-semibold">
+                                {% if is_edit %}Save Changes{% else %}Publish Story{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+/* PulseFeed SaaS Modern Stylesheet */
+:root {
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-light: #f8fafc;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+main {
+    flex: 1;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+}
+
+.avatar-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.avatar-sm {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.avatar-md {
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.article-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.article-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+.hover-primary:hover {
+    color: var(--primary-color) !important;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.border-dashed {
+    border: 2px dashed var(--border-color);
+}
+
+/* 
+======================================================
+BUG-07: DEFECTIVE DARK MODE STYLES (WCAG CONTRAST BUG)
+Vibe coder flipped background to #121212 and card to #1e1e1e, 
+but left .card-title, .card-text, .text-dark, and headings in dark grey #333333!
+Result: Contrast ratio is 1.4:1 (violates WCAG AA 4.5:1 minimum).
+======================================================
+*/
+body.dark-theme {
+    background-color: #121212 !important;
+    color: #e0e0e0;
+}
+
+body.dark-theme .navbar {
+    background-color: #0a0a0a !important;
+    border-bottom: 1px solid #2d2d2d;
+}
+
+body.dark-theme .card {
+    background-color: #1e1e1e !important;
+    border-color: #2e2e2e !important;
+}
+
+/* FLAW: Forgot to adapt card text colors! In dark mode, card-title remains #212529/dark! */
+body.dark-theme .article-card .card-text {
+    color: #333333 !important; /* Extremely low contrast against #1e1e1e! */
+}
+
+body.dark-theme .card-title a {
+    color: #2d3748 !important; /* Low contrast! */
+}
+
+body.dark-theme .footer {
+    background-color: #0f0f0f !important;
+    border-top: 1px solid #222 !important;
+    color: #555 !important;
+}

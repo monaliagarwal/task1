@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PulseFeed — AI-Powered Content Hub{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="light-theme" id="app-body">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{% url 'feed' %}">
+                <span class="brand-badge bg-primary text-white px-2 py-1 rounded">PF</span>
+                <span>Pulse<span class="text-primary">Feed</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navContent">
+                <form class="d-flex mx-auto col-lg-5 my-2 my-lg-0" method="GET" action="{% url 'feed' %}">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                        <input class="form-control border-start-0" type="search" name="q" placeholder="Search insights, articles, tags..." value="{{ search_query|default:'' }}">
+                    </div>
+                </form>
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'feed' %}"><i class="bi bi-house-door me-1"></i> Home</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{% url 'article_create' %}">
+                                <i class="bi bi-pencil-square me-1"></i> New Story
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-white" href="#" role="button" data-bs-toggle="dropdown">
+                                <span class="avatar-circle bg-primary text-white">{{ user.username|slice:":1"|upper }}</span>
+                                <span class="fw-semibold">{{ user.username }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow">
+                                <li><h6 class="dropdown-header">Signed in as @{{ user.username }}</h6></li>
+                                <li><a class="dropdown-item" href="{% url 'feed' %}?author={{ user.username }}"><i class="bi bi-person me-2"></i>My Articles</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <!-- BUG-05 client side logout simulation trigger -->
+                                    <a class="dropdown-item text-danger" id="logout-btn" href="{% url 'logout' %}">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Log Out
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary btn-sm rounded-pill px-3" href="{% url 'register' %}">Get Started</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item ms-lg-2">
+                        <!-- Theme Toggle Button (Triggers BUG-07 Contrast Defect) -->
+                        <button class="btn btn-sm btn-outline-secondary rounded-circle" id="theme-toggle" title="Toggle Theme">
+                            <i class="bi bi-moon-stars" id="theme-icon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-4 bg-light border-top">
+        <div class="container text-center text-muted">
+            <p class="mb-1"><strong>PulseFeed SaaS</strong> &bull; Production Prototype for QA & Automated Testing</p>
+            <small>&copy; 2026 PulseFeed Inc. Internal QA Benchmark Instance.</small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/app.js"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
